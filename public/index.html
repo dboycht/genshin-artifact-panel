@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>原神圣遗物评分与练度面板</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>圣遗物评分 <span class="amp">&amp;</span> 练度面板</h1>
+    <p class="sub">本地工具 · 数据不出本机</p>
+  </div>
+
+  <div class="query">
+    <input id="uidInput" type="text" inputmode="numeric" placeholder="输入原神 UID（9 位）" autocomplete="off">
+    <button id="btnQuery" class="primary">查询 UID</button>
+    <button id="btnRefresh" class="ghost" title="跳过本地缓存重新拉取">强制刷新</button>
+  </div>
+
+  <div class="io">
+    <button id="btnImport" class="ghost">导入</button>
+    <button id="btnExportBackup" class="ghost">导出备份</button>
+    <button id="btnExportGood" class="ghost">导出 GOOD</button>
+    <button id="btnAddManual" class="ghost">手动新增角色</button>
+    <button id="btnClear" class="ghost danger">清空</button>
+    <input id="fileInput" type="file" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<div id="banner" class="banner hidden"></div>
+
+<main class="layout">
+  <aside class="sidebar">
+    <div class="side-head">
+      <span id="playerInfo" class="player">尚未查询</span>
+      <span id="roleCount" class="count"></span>
+    </div>
+    <ul id="roleList" class="role-list"></ul>
+    <div class="side-foot">
+      <p class="hint">展柜最多 8 个角色；未装备的圣遗物不在 Enka 返回里。</p>
+    </div>
+  </aside>
+
+  <section id="detail" class="detail">
+    <div class="empty">
+      <h2>还没有数据</h2>
+      <p>在上方输入 UID 查询角色展柜，或点「导入」载入 GOOD / 莫娜占卜铺 / 本项目备份的 JSON 文件。</p>
+      <p class="dim">查 UID 前请在游戏内把角色放进「角色展柜」，并打开「显示角色详情」。</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>数值来源：genshin-db（MIT）· Enka.Network 公开接口 · 评分口径为本项目自定，详见 README</span>
+  <span id="ver"></span>
+</footer>
+
+<script src="js/constants.js"></script>
+<script src="js/roles.js"></script>
+<script src="js/gamedata.js"></script>
+<script src="js/scoring.js"></script>
+<script src="js/enka.js"></script>
+<script src="js/good.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

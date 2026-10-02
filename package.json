@@ -1,0 +1,25 @@
+{
+  "name": "genshin-artifact-panel",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "description": "本地版原神圣遗物评分与角色练度面板：UID 查询展柜、GOOD/莫娜 JSON 导入、手动词条评分与面板估算",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server/server.mjs",
+    "verify": "node tools/verify-gamedata.mjs",
+    "verify:full": "node tools/verify-gamedata.mjs && node tools/smoke-test.mjs",
+    "build:data": "node --max-old-space-size=6144 tools/build-gamedata.mjs",
+    "build:enka": "node --use-system-ca tools/build-enka-map.mjs"
+  },
+  "keywords": [
+    "genshin",
+    "artifact",
+    "原神",
+    "圣遗物",
+    "评分"
+  ]
+}

@@ -1,0 +1,34 @@
+MIT License
+
+Copyright (c) 2026 D BOY (genshin-artifact-panel)
+Portions Copyright (c) 2026 秋晨 (aumveil/genshin-artifact-scorer)
+
+本项目的算法结构、数值表组织方式与部分实现参考了以下 MIT 许可项目，
+按 MIT 要求在此保留其版权声明；详见 README「来源与致谢」一节：
+
+  - aumveil/genshin-artifact-scorer  https://github.com/aumveil/genshin-artifact-scorer
+    Copyright (c) 2026 秋晨
+  - theBowja/genshin-db              https://github.com/theBowja/genshin-db
+    （静态数值表的来源；其数据本身来自 fandom wiki 与公开数据整理）
+  - m19e/artifact-scorer             https://github.com/m19e/artifact-scorer
+    （主词条 0 级/+20 取值与副词条满档值的交叉验证来源）
+  - EnkaNetwork/API-docs             https://github.com/EnkaNetwork/API-docs
+    （UID 接口的数据结构与技能 id 映射来源）
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

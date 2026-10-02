@@ -1,0 +1,22 @@
+# 开发副本专用文档，不进仓库
+DEVELOPMENT.md
+ERROR.md
+HANDOVER.md
+
+# 运行时数据（用户数据一律不推送）
+data/
+.cache/
+*.log
+*.saz
+*.har
+
+# 依赖与工具产物
+node_modules/
+dist/
+build/
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
