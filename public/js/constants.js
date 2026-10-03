@@ -44,6 +44,9 @@
   });
 
   const EXPECTED_TIER = 0.85;
+  // 单发期望档位（四档等概率）——面板图里「每条副词条前的数字」就用它做分母
+  const SUB_STAT_AVG = {};
+  for (const k in UMAX) SUB_STAT_AVG[k] = +(UMAX[k] * EXPECTED_TIER).toFixed(5);
   const SUB_STATS = Object.keys(UMAX);
   const STAT_TYPE = {};
   for (const k of SUB_STATS) {
@@ -165,7 +168,7 @@
   global.App = global.App || {};
   global.App.constants = {
     SLOTS, SLOT_KEYS, ENKA_SLOT,
-    UMAX, ROLL_TIERS, TIER_DISPLAY, TIER_RATIO, EXPECTED_TIER, SUB_STATS, STAT_TYPE,
+    UMAX, ROLL_TIERS, TIER_DISPLAY, TIER_RATIO, EXPECTED_TIER, SUB_STAT_AVG, SUB_STATS, STAT_TYPE,
     MAIN_STAT_RANGE, MAIN_STATS_BY_SLOT, ELEMENT_DMG,
     MAX_LEVEL: 20, MAX_ROLLS_PER_STAT: 6, MAX_WEIGHT: 2,
     mainStatValue, rollEquivalent, decomposeRolls, inferInitialCount, fmt

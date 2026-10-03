@@ -68,29 +68,41 @@ const store = await readSource();
 const out = {};
 let skipped = 0;
 for (const [avatarId, c] of Object.entries(store)) {
+  // 内部名：SideIconName = "UI_AvatarIcon_Side_Ambor" → "Ambor"
+  // 立绘直链 = https://enka.network/ui/UI_Gacha_AvatarImg_{内部名}.png（实测 200，658KB~1.8MB）
+  const side = c && c.SideIconName;
+  const internalName = typeof side === 'string' ? side.replace(/^UI_AvatarIcon_Side_/, '') : null;
+
   const skills = c && c.Skills;
-  if (!skills) { skipped++; continue; }
-  const entry = { name: c.NameTextMapHash || null };
-  for (const [skillId, skillName] of Object.entries(skills)) {
-    const type = classify(skillName);
-    if (type) entry[type] = Number(skillId);
+  const entry = { internalName, auto: null, skill: null, burst: null, icons: {} };
+  if (skills) {
+    for (const [skillId, skillName] of Object.entries(skills)) {
+      const type = classify(skillName);
+      if (type) {
+        entry[type] = Number(skillId);
+        entry.icons[type] = skillName;      // 图标名，如 "Skill_E_Ambor"，配 enka.network/ui/ 取图
+      }
+    }
   }
-  if (entry.auto || entry.skill || entry.burst) {
-    out[avatarId] = { auto: entry.auto ?? null, skill: entry.skill ?? null, burst: entry.burst ?? null };
-  } else {
-    skipped++;
-  }
+  if (entry.auto || entry.skill || entry.burst) out[avatarId] = entry;
+  else skipped++;
 }
 
 fs.writeFileSync(OUT, JSON.stringify(out), 'utf8');
 console.log('写入 ' + OUT);
 console.log('角色数 ' + Object.keys(out).length + '，跳过 ' + skipped);
 
-// 自检：安柏 10000021 应为 auto=10041, skill=10017, burst=10032
+// 自检：安柏 10000021 应为 auto=10041 skill=10017 burst=10032，内部名 Ambor
 const amber = out['10000021'];
-console.log('自检 安柏(10000021): ' + JSON.stringify(amber));
-const ok = amber && amber.auto === 10041 && amber.skill === 10017 && amber.burst === 10032;
+console.log('自检 安柏(10000021): auto=' + (amber && amber.auto) + ' skill=' + (amber && amber.skill)
+  + ' burst=' + (amber && amber.burst) + ' internalName=' + (amber && amber.internalName));
+const ok = amber && amber.auto === 10041 && amber.skill === 10017 && amber.burst === 10032
+  && amber.internalName === 'Ambor';
 console.log(ok ? '自检通过 ✅' : '自检未通过 ⚠️（上游数据可能变动，请人工核对）');
+
+// 内部名覆盖率：立绘直链依赖它，缺了就出不了图
+const noName = Object.entries(out).filter(([, v]) => !v.internalName).map(([k]) => k);
+console.log('内部名缺失 ' + noName.length + ' 个' + (noName.length ? '：' + noName.slice(0, 10).join(',') : ' ✅'));
 
 // 覆盖率检查：与 genshin-db 角色表比对（可选）
 const charsPath = path.resolve(__dirname, '..', 'public', 'gamedata', 'characters.json');

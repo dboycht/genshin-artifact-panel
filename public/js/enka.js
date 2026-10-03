@@ -139,6 +139,7 @@
           itemId: eq.itemId,
           name: w ? w.name : ("武器#" + eq.itemId),
           rarity: eq.flat ? eq.flat.rankLevel : null,
+          icon: eq.flat ? eq.flat.icon : null,
           level: eq.weapon.level,
           ascension: eq.weapon.promoteLevel,
           refinement
@@ -222,6 +223,7 @@
       setName: set ? set.name : (setId != null ? ("套装#" + setId) : "未知套装"),
       setSlug: set ? set.slug : null,
       rarity: flat.rankLevel || null,
+      icon: flat.icon || null,
       level, mainStat, mainValue, substats,
       rollCount, initialCount,
       source: "enka"

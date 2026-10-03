@@ -109,6 +109,55 @@
 
 ---
 
+## 生成「角色练度面板图」
+
+把角色渲染成一张可分享的竖版长图（默认 900 CSS px 宽、**2 倍像素密度**，即 1800 px 宽）。
+
+图上包含：
+
+- 角色**立绘**、名字、UID、等级、命座、三项**天赋等级**（带技能图标）
+- **面板属性表**：每行给出「总值 / 白字 / 绿字」三段，与游戏内口径一致
+  （白字 = 角色与武器的基础值 + 固有值，绿字 = 圣遗物与各种加成）
+- **圣遗物总分与评级**，以及分项统计（各词条的副词条合计）
+- **武器卡**（精炼、等级、副属性、特效）
+- **5 件圣遗物卡**：单件分 / 满分 / 达成度、评级、主词条、
+  **每条副词条的「roll 当量」**与数值；有效词条高亮，档位高的词条带 `≫` 标记
+
+### 当前状态（2026-10-03）
+
+出图链路**已打通并实测**，`POST /api/render` 传入面板图数据模型即返回 PNG：
+
+```bash
+# 服务在跑的前提下，跑出图链路自检（会用合成数据真出一张 PNG）
+node tools/verify-card.mjs --port 8788 --out card.png
+```
+
+> ⚠️ **主界面上的「导出面板图」按钮尚未接线**（`app.js` 里还没有入口），
+> 目前只能通过 `tools/verify-card.mjs` 或直接调 `/api/render` 出图。
+> 接线是下一轮第一件事，见 `DEVELOPMENT.md` §5。
+
+### 出图是怎么实现的
+
+用**本机已安装的 Chrome**（或 Edge）以 CDP 协议无头渲染 HTML，**零 npm 依赖**——
+不需要下载 Puppeteer 那套上百 MB 的 Chromium。渲染器见 `tools/render.mjs`：
+
+- 先量 `scrollHeight` 再截图，所以**整页高度自适应**，不会截出空白也不会裁切
+- 等 `document.fonts.ready` 与全部 `<img>` 加载完再截，避免立绘是空白
+- 支持任意像素密度（默认 2 倍）
+
+如果本机没有 Chrome/Edge，服务启动时会提示「面板图导出不可用」，其余功能不受影响。
+
+### 立绘与图标来自哪里
+
+全部走 `https://enka.network/ui/<资源名>.png`（实测可直连、无 Referer/UA 要求），
+由本地服务代理并**落盘缓存**在 `data/cache/img/`（立绘 0.6~1.8 MB，不缓存会每次重下）。
+资源名从 Enka 的数据字典派生（如 `UI_AvatarIcon_Side_Ambor` → 立绘 `UI_Gacha_AvatarImg_Ambor`）。
+
+> ⚠️ **这些美术素材的版权属于米哈游，本项目不打包任何素材**，只在运行时按需拉取。
+> 仓库里只有代码与数值表。
+
+---
+
 ## 支持的导入导出格式
 
 | 格式 | 方向 | 说明 |
@@ -197,8 +246,9 @@ node --use-system-ca tools/build-enka-map.mjs [本地 characters.json]          
 | [theBowja/genshin-db](https://github.com/theBowja/genshin-db) | MIT | 角色 / 武器 / 套装 / 成长曲线等静态数值 |
 | [m19e/artifact-scorer](https://github.com/m19e/artifact-scorer) | MIT | 主词条 0 级与 +20 取值、副词条满档值的交叉验证 |
 | [frzyc/genshin-optimizer](https://github.com/frzyc/genshin-optimizer) | MIT | GOOD 格式的权威 schema |
-| [EnkaNetwork/API-docs](https://github.com/EnkaNetwork/API-docs) | — | UID 接口的数据结构与「技能 id → 普攻/战技/爆发」映射 |
-| [Enka.Network](https://enka.network/) | — | 角色展柜数据接口 |
+| [EnkaNetwork/API-docs](https://github.com/EnkaNetwork/API-docs) | — | UID 接口的数据结构、「技能 id → 普攻/战技/爆发」映射、立绘与图标的资源名 |
+| [Enka.Network](https://enka.network/) | — | 角色展柜数据接口 + UI 图床 |
+| [yoimiya-kokomi/miao-plugin](https://github.com/yoimiya-kokomi/miao-plugin) | **MIT** (© 2023 Yoimiya) | 「喵喵版」圣遗物评分口径的数值表与角色权重表（`public/gamedata/miao-rules.json`，由 `tools/build-miao-rules.mjs` 抽取）。该仓库 README 明说代码可任意使用；**但其立绘/图标素材不在 MIT 授权内，本项目一律不打包** |
 
 许可证归档见 [`licenses/`](licenses/)。
 

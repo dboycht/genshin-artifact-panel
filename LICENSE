@@ -13,7 +13,10 @@ Portions Copyright (c) 2026 秋晨 (aumveil/genshin-artifact-scorer)
   - m19e/artifact-scorer             https://github.com/m19e/artifact-scorer
     （主词条 0 级/+20 取值与副词条满档值的交叉验证来源）
   - EnkaNetwork/API-docs             https://github.com/EnkaNetwork/API-docs
-    （UID 接口的数据结构与技能 id 映射来源）
+    （UID 接口的数据结构、技能 id 映射与美术资源名来源）
+  - yoimiya-kokomi/miao-plugin       https://github.com/yoimiya-kokomi/miao-plugin
+    Copyright (c) 2023 Yoimiya
+    （「喵喵版」圣遗物评分口径的数值表与角色权重表；其美术素材不在 MIT 授权内，本项目不打包）
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

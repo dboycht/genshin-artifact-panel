@@ -1,0 +1,133 @@
+/* card.css —— 面板图样式（这是一个"被截图"的页面，不是交互界面，所以尺寸固定、无动效） */
+:root {
+  --bg: #16131d;
+  --surface: #221d2b;
+  --surface2: #2b2436;
+  --line: #3b3349;
+  --text: #ece7f5;
+  --dim: #a49bb8;
+  --gold: #e2c078;
+  --gold2: #f6e0aa;
+  --ok: #6fcf97;
+  --warn: #e8b74a;
+  --bad: #e2686b;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: transparent; }
+body { width: 900px; }
+.card {
+  width: 900px; background: var(--bg); color: var(--text);
+  font: 14px/1.5 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  position: relative; overflow: hidden;
+}
+.loading { padding: 60px; text-align: center; color: var(--dim); }
+
+/* ---------- 顶部：立绘 + 角色信息 ---------- */
+.hero { position: relative; height: 330px; overflow: hidden; }
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(700px 420px at 78% 20%, rgba(226, 192, 120, .16), transparent 70%),
+    linear-gradient(140deg, #241d33 0%, #16131d 60%);
+}
+.splash {
+  position: absolute; right: -30px; bottom: -10px; height: 340px; z-index: 1;
+  /* 只用一条左向渐变做遮罩：多张蒙版 + mask-composite 在部分 Chrome 上会把整张图吃掉 */
+  -webkit-mask-image: linear-gradient(to left, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to left, #000 58%, transparent 100%);
+  filter: drop-shadow(-14px 6px 26px rgba(0, 0, 0, .55));
+}
+/* 底部渐隐：直接盖一层与卡片底色一致的渐变，比蒙版可靠 */
+.hero-fade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 110px; z-index: 2;
+  background: linear-gradient(to bottom, rgba(22, 19, 29, 0), var(--bg) 88%);
+  pointer-events: none;
+}
+.hero-info { position: absolute; left: 26px; top: 22px; z-index: 3; max-width: 470px; }
+.hero-name { font-size: 40px; font-weight: 800; letter-spacing: 2px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+.hero-meta { margin-top: 6px; font-size: 13px; color: var(--gold2); letter-spacing: .4px; }
+.hero-meta b { color: #fff; font-weight: 600; }
+.talents { display: flex; gap: 12px; margin-top: 18px; }
+.talent { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.talent .ring {
+  width: 54px; height: 54px; border-radius: 50%;
+  border: 2px solid var(--gold); background: rgba(20, 16, 26, .82);
+  display: flex; align-items: center; justify-content: center; position: relative;
+}
+.talent .ring img { width: 40px; height: 40px; object-fit: contain; }
+.talent .lv {
+  position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%);
+  min-width: 22px; padding: 0 5px; border-radius: 99px;
+  background: var(--gold); color: #241d0c; font-size: 12px; font-weight: 700; text-align: center;
+}
+.talent .cap { font-size: 10px; color: var(--dim); }
+
+/* ---------- 面板属性 ---------- */
+.panel { padding: 16px 22px 4px; }
+/* 注意：`1fr` 的最小尺寸是 auto，内容宽时会撑破网格、把右列挤出画布。
+   必须用 minmax(0, 1fr) 才能让列真正可压缩。 */
+.panel-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 18px; }
+.prow {
+  display: grid; grid-template-columns: 74px minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: baseline; padding: 7px 10px; border-radius: 7px;
+  background: var(--surface); white-space: nowrap; overflow: hidden;
+}
+.prow .label { font-size: 13px; color: var(--dim); }
+.prow .total { font-size: 16px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.prow .split { font-size: 11px; text-align: right; color: var(--dim); font-variant-numeric: tabular-nums; }
+.prow .split .b { color: #cfc6e0; }
+.prow .split .g { color: var(--ok); }
+.prow.hl .total { color: var(--gold2); }
+
+/* ---------- 圣遗物总评 ---------- */
+.total {
+  margin: 12px 22px 0; padding: 14px 18px; border-radius: 10px;
+  background: linear-gradient(100deg, var(--surface2), var(--surface));
+  border: 1px solid var(--line);
+  display: grid; grid-template-columns: 190px 1fr; gap: 16px; align-items: center;
+}
+.total .score { font-size: 40px; font-weight: 800; color: var(--gold2); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.total .score small { font-size: 13px; color: var(--dim); font-weight: 400; }
+.total .cap { font-size: 12px; color: var(--dim); }
+.total .grade {
+  display: inline-block; margin-left: 8px; padding: 1px 12px; border-radius: 99px;
+  border: 1px solid var(--gold); color: var(--gold2); font-size: 15px; font-weight: 700; vertical-align: 6px;
+}
+.contrib { display: flex; flex-wrap: wrap; gap: 5px 16px; font-size: 12.5px; }
+.contrib .c { color: var(--dim); }
+.contrib .c b { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* ---------- 装备卡 ---------- */
+.equips { padding: 14px 22px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.eq { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 11px; position: relative; overflow: hidden; }
+.eq-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.eq-head img { width: 38px; height: 38px; object-fit: contain; border-radius: 7px; background: var(--surface2); flex: 0 0 auto; }
+.eq-head .nm { min-width: 0; }
+.eq-head .nm .n { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.eq-head .nm .s { font-size: 10.5px; color: var(--dim); }
+.eq-grade { position: absolute; right: 9px; top: 9px; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--dim); }
+.eq-grade.ACE { color: #ff9ec4; border-color: #8a4a68; }
+.eq-grade.SSS { color: #ffd479; border-color: #8a7038; }
+.eq-grade.SS { color: #e2c078; border-color: #7a6438; }
+.eq-grade.S { color: #9fd3ff; border-color: #47688a; }
+.eq-main { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0 6px; border-bottom: 1px dashed var(--line); margin-bottom: 5px; }
+.eq-main .k { font-size: 11.5px; color: var(--gold2); }
+.eq-main .v { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.eq-score { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); margin-bottom: 6px; }
+.eq-score b { color: var(--gold2); }
+.subs { display: flex; flex-direction: column; gap: 3px; }
+.sub { display: grid; grid-template-columns: 30px 1fr auto; align-items: baseline; gap: 6px; font-size: 11.5px; }
+.sub .r { color: var(--dim); text-align: right; font-variant-numeric: tabular-nums; }
+.sub .n { color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sub .n.off { opacity: .45; }
+.sub .v { font-variant-numeric: tabular-nums; color: #cfc6e0; }
+.sub.eff .n { color: var(--text); }
+.sub.eff .v { color: #fff; font-weight: 600; }
+.sub .arr { color: var(--ok); font-size: 10px; }
+.weapon .effect { font-size: 10.5px; color: var(--dim); line-height: 1.45; max-height: 46px; overflow: hidden; }
+
+/* ---------- 页脚 ---------- */
+.foot {
+  margin-top: 14px; padding: 10px 22px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; font-size: 10.5px; color: var(--dim);
+}
