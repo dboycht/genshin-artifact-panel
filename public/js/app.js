@@ -79,12 +79,77 @@
     $("#fileInput").addEventListener("change", onFile);
     $("#btnExportBackup").addEventListener("click", () => download(IO.exportBackup(state.roles), "圣遗物面板-备份-" + today() + ".json"));
     $("#btnExportGood").addEventListener("click", () => download(IO.exportGood(state.roles), "GOOD-" + today() + ".json"));
+    $("#btnExportCard").addEventListener("click", () => exportCard(null));
+    $("#btnExportAll").addEventListener("click", exportAllCards);
     $("#btnAddManual").addEventListener("click", addManual);
     $("#btnClear").addEventListener("click", () => {
       if (!confirm("确定清空本机保存的全部角色数据？此操作不可撤销（建议先导出备份）。")) return;
       state.roles = []; state.selected = null; state.player = null;
       persist(); renderAll();
     });
+
+    /**
+     * 把角色的「面板图数据模型」交给本地服务渲染成 PNG 并下载。
+     * 真正的截图在服务端用本机 Chrome 无头完成（见 tools/render.mjs）。
+     * @returns {Promise<boolean>} 是否成功
+     */
+    async function exportCard(role) {
+      const r = role || current();
+      if (!r) { showBanner("warn", "请先在左侧选择一个角色。"); return false; }
+      if (!App.card) { showBanner("err", "面板图模块（card.js）未加载。"); return false; }
+      const btn = $("#btnExportCard");
+      const oldText = btn.textContent;
+      btn.disabled = true; btn.textContent = "出图中…";
+      showBanner("info", "正在渲染「" + r.name + "」的面板图。首次出图要下载立绘（约 1~2 MB），会慢几秒…");
+      try {
+        const model = App.card.buildModel(r, {
+          uid: state.player && state.player.uid ? state.player.uid : null
+        });
+        const res = await fetch("/api/render", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: model, width: 900, scale: 2 })
+        });
+        if (!res.ok) {
+          let msg = "HTTP " + res.status;
+          try { const j = await res.json(); if (j && j.error) msg = j.error; } catch (e) { /* 非 JSON */ }
+          throw new Error(msg);
+        }
+        const blob = await res.blob();
+        const fname = "面板图-" + r.name + "-" + today() + ".png";
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        showBanner("info", "已导出 " + fname + "（" + Math.round(blob.size / 1024) + " KB）");
+        return true;
+      } catch (e) {
+        showBanner("err", "出图失败：" + e.message
+          + "。若提示找不到 Chrome，请确认本机装了 Chrome 或 Edge；也可用 CHROME_PATH 环境变量指定。");
+        return false;
+      } finally {
+        btn.disabled = false; btn.textContent = oldText;
+      }
+    }
+
+    /** 为列表里每个角色逐个出图（串行，避免同时拉起多个无头 Chrome） */
+    async function exportAllCards() {
+      if (!state.roles.length) { showBanner("warn", "还没有角色，先查 UID 或导入数据。"); return; }
+      if (!App.card) { showBanner("err", "面板图模块（card.js）未加载。"); return; }
+      if (!confirm("将为 " + state.roles.length + " 个角色逐个出图，每张约几秒。继续？")) return;
+      const btn = $("#btnExportAll");
+      btn.disabled = true;
+      let okCount = 0, badCount = 0;
+      for (let i = 0; i < state.roles.length; i++) {
+        btn.textContent = "出图 " + (i + 1) + "/" + state.roles.length;
+        const okOne = await exportCard(state.roles[i]);
+        if (okOne) okCount++; else badCount++;
+      }
+      btn.disabled = false; btn.textContent = "批量出图";
+      showBanner(badCount ? "warn" : "info",
+        "批量出图完成：成功 " + okCount + " 张" + (badCount ? "，失败 " + badCount + " 张" : "") + "。");
+    }
   }
 
   const today = () => new Date().toLocaleDateString("sv");
